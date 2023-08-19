@@ -1,0 +1,57 @@
+```{julia}
+# using Makie, GLMakie, GeoMakie
+# import Downloads
+# using GeoJSON
+using GeoInterface
+using Shapefile
+# GLMakie.activate!()
+@time using Plots
+gr()
+```
+
+```{julia}
+f = "z:/backup_N/Research/cmip5/ChinaHW.R/inst/extdata/shp/bou1_4p_sml.shp"
+
+table = Shapefile.Table(f)
+# if you only want the geometries and not the metadata in the DBF file
+geoms = Shapefile.shapes(table)
+```
+
+```{julia}
+ps = []
+
+for i in 1:10
+  p = plot(geoms, framestyle = :box, aspect_ratio = 1.3, color = RGBA(0, 0, 0, 0) , 
+    linecolor = :red,
+    linewidth = 0.5)
+  xlims!(70, 140)
+  ylims!(15, 55)
+
+  push!(ps, p)
+end
+@time plot(ps..., layout = (3, 4))
+```
+
+```{julia}
+
+```
+
+
+```{r}
+
+```
+
+```{julia}
+# f = "Z:/Researches/CMIP6/us-states.json"
+GLMakie.activate!()
+# states_geo = GeoJSON.read(read(f, String))
+#n = length(GeoInterface.features(states_geo))
+n = length(states_geo)
+
+fig = Figure(resolution=(1200, 800), fontsize=22)
+ax = GeoAxis(fig[1, 1]; dest="+proj=wintri", coastlines=true,
+  title="Projection: Winkel Tripel, US States", tellheight=true)
+poly!(ax, states_geo, color=1:n, colormap=:plasma, strokecolor=:black,
+  strokewidth=1, overdraw=true, transformation=(:xy, 10))
+fig
+```

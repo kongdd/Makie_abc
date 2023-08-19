@@ -1,0 +1,9 @@
+*.pdf
+*.png
+*.jpg
+
+*.csv
+*.mp4
+*.jld2
+
+.vdoc.jl
