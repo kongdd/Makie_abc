@@ -1,0 +1,16 @@
+```{julia}
+using Observables
+@time using Printf
+
+x = Observable(0.0)
+y = @lift(@sprintf("%f + x", $x))
+
+on(x) do x
+  # 这里y是`Observables`变量
+  println("New value of x = $x, y = $(y[])")
+end
+
+x[] = 5
+"ok"
+# y[]
+```

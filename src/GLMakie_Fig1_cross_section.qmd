@@ -1,0 +1,82 @@
+## 加载数据
+
+```{julia}
+include("../main_pkgs.jl")
+
+function getRegionalMean(vol)
+  ntime = size(vol, 3)
+  map(k -> nanmean(vol[:, :, k]), 1:ntime)
+end
+
+```
+
+## 绘图
+
+
+```{julia}
+mytheme = Theme(fontsize=36)
+set_theme!(mytheme)
+
+# declare figure and axises
+fig = Figure()
+# ax.aspect = DataAspect()
+sg = SliderGrid(fig[1, 2],
+  (label="lon", range=lon),
+  (label="lat", range=lat),
+  (label="time", range=time)
+)
+
+sl_yz, sl_xz, sl_xy = sg.sliders
+slon = sl_yz.value
+slat = sl_xz.value
+stime = sl_xy.value
+
+i = @lift findall(lon .== $slon)[1]
+j = @lift findall(lat .== $slat)[1]
+k = @lift findall(time .== $stime)[1]
+
+set_close_to!(sl_yz, middle(lon))
+set_close_to!(sl_xz, middle(lat))
+set_close_to!(sl_xy, middle(time))
+
+# ax = LScene(fig[1, 1], scenekw=(show_axis=false,)) # not used
+
+# `obs` obj can be passed to makie directly
+ax_xz = Axis(fig[2, 1], title=@lift(@sprintf("xz刨面图: lat = %.2f", $slat)),
+  ylabel="Longitude", xlabel="Doy")
+
+ax_yz = Axis(fig[2, 2], title=@lift("yz刨面图: lon = $(lon[$i])"),
+  ylabel="Latitude", xlabel="Doy")
+
+ax_xy = Axis(fig[3, 2], title=@lift(@sprintf("xy刨面图: time = %d", $stime)),
+  xlabel="Latitude", ylabel="Longitude")
+
+ax5 = Axis(fig[3, 1], title=@lift(@sprintf("xy刨面图: time = %d", $stime)))
+
+mat_yz = @lift vol[$i, :, :]'
+mat_xz = @lift vol[:, $j, :]'
+mat_z = @lift vol[:, :, $k]
+zs = getRegionalMean(vol)
+z = @lift vol[$i, $j, :]
+
+heatmap!(ax_xz, time, lon, mat_xz)
+
+## yz图
+heatmap!(ax_yz, time, lat, mat_yz)
+
+## 正常的空间图
+hm = heatmap!(ax_xy, lon, lat, mat_z)
+Colorbar(fig[:, 0], hm, height=Relative(0.5))
+vlines!(ax_xy, slon)
+hlines!(ax_xy, slat)
+
+# 时间序列图
+plot!(ax5, time, zs, label="China")
+lines!(ax5, time, z, label="Pixel", color=:blue)
+vlines!(ax5, k) # , zs[$k]
+
+colgap!(fig.layout, 0)
+rowgap!(fig.layout, 0)
+
+fig
+```
