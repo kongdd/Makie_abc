@@ -19,27 +19,7 @@ set_theme!(mytheme)
 
 # declare figure and axises
 fig = Figure()
-# ax.aspect = DataAspect()
-sg = SliderGrid(fig[1, 2],
-  (label="lon", range=lon),
-  (label="lat", range=lat),
-  (label="time", range=time)
-)
-
-sl_yz, sl_xz, sl_xy = sg.sliders
-slon = sl_yz.value
-slat = sl_xz.value
-stime = sl_xy.value
-
-i = @lift findall(lon .== $slon)[1]
-j = @lift findall(lat .== $slat)[1]
-k = @lift findall(time .== $stime)[1]
-
-set_close_to!(sl_yz, middle(lon))
-set_close_to!(sl_xz, middle(lat))
-set_close_to!(sl_xy, middle(time))
-
-# ax = LScene(fig[1, 1], scenekw=(show_axis=false,)) # not used
+slon, slat, stime, i, j, k = make_slider_3d(fig[1, 2], lon, lat, time)
 
 # `obs` obj can be passed to makie directly
 ax_xz = Axis(fig[2, 1], title=@lift(@sprintf("xz刨面图: lat = %.2f", $slat)),
@@ -80,3 +60,7 @@ rowgap!(fig.layout, 0)
 
 fig
 ```
+
+## TODO
+
+1. 需要学习makie layout的控制方法

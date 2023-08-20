@@ -35,13 +35,17 @@ sg = SliderGrid(fig[1, 1],
 # , colormap = colormap
 plt = volumeslices!(ax, x, y, z, vol)
 
+on(i) do v
+  plt[:update_yz][](v)
+end
+on(j) do v
+  plt[:update_xz][](v)
+end
+on(k) do v
+  plt[:update_xy][](v)
+end
 # connect sliders to `volumeslices` update methods
-sl_yz, sl_xz, sl_xy = sg.sliders
-update_slice(plt, sl_yz, sl_xz, sl_xy)
-
-set_close_to!(sl_yz, 0.5length(x))
-set_close_to!(sl_xz, 0.5length(y))
-set_close_to!(sl_xy, 0.5length(z))
+# update_slice(plt, sl_yz, sl_xz, sl_xy)
 
 # limits = limits
 ax2 = LScene(fig[1, 2], scenekw = (show_axis = true,))
