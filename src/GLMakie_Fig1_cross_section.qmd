@@ -14,7 +14,6 @@ set_theme!(mytheme)
 fig = Figure()
 slon, slat, stime, i, j, k = make_slider_3d(fig[1, 2], lon, lat, time)
 
-# `obs` obj can be passed to makie directly
 ax_xz = Axis(fig[2, 1], title=@lift(@sprintf("xz剖面图: lat = %.2f", $slat)),
   ylabel="Longitude", xlabel="Doy")
 

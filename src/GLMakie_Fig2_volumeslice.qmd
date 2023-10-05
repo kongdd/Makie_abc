@@ -3,11 +3,6 @@
 ```{julia}
 include("../main_pkgs.jl")
 
-function getRegionalMean(vol)
-  ntime = size(vol, 3)
-  map(k -> nanmean(vol[:, :, k]), 1:ntime)
-end
-
 vol = rand(nlon, nlat, ntime)
 ```
 
