@@ -15,16 +15,16 @@ fig = Figure()
 slon, slat, stime, i, j, k = make_slider_3d(fig[1, 2], lon, lat, time)
 
 # `obs` obj can be passed to makie directly
-ax_xz = Axis(fig[2, 1], title=@lift(@sprintf("xz刨面图: lat = %.2f", $slat)),
+ax_xz = Axis(fig[2, 1], title=@lift(@sprintf("xz剖面图: lat = %.2f", $slat)),
   ylabel="Longitude", xlabel="Doy")
 
-ax_yz = Axis(fig[2, 2], title=@lift("yz刨面图: lon = $(lon[$i])"),
+ax_yz = Axis(fig[2, 2], title=@lift("yz剖面图: lon = $(lon[$i])"),
   ylabel="Latitude", xlabel="Doy")
 
-ax_xy = Axis(fig[3, 2], title=@lift(@sprintf("xy刨面图: time = %d", $stime)),
+ax_xy = Axis(fig[3, 2], title=@lift(@sprintf("xy剖面图: time = %d", $stime)),
   xlabel="Latitude", ylabel="Longitude")
 
-ax5 = Axis(fig[3, 1], title=@lift(@sprintf("xy刨面图: time = %d", $stime)))
+ax5 = Axis(fig[3, 1], title=@lift(@sprintf("xy剖面图: time = %d", $stime)))
 
 mat_yz = @lift vol[$i, :, :]'
 mat_xz = @lift vol[:, $j, :]'
