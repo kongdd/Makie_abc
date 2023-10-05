@@ -7,6 +7,8 @@ function getRegionalMean(vol)
   ntime = size(vol, 3)
   map(k -> nanmean(vol[:, :, k]), 1:ntime)
 end
+
+vol = rand(nlon, nlat, ntime)
 ```
 
 ## 绘图
@@ -18,7 +20,10 @@ set_theme!(mytheme)
 fig = Figure()
 slon, slat, stime, i, j, k = make_slider_3d(fig[2, 1], lon, lat, time)
 
-ax = LScene(fig[1, 1], scenekw=(show_axis=false,)) # not used
+ax = Axis3(fig[1, 1], viewmode=:fit, 
+  xlabel = "Lon", ylabel = "Lat", zlabel = "Time", 
+  limits = ((70, 140), (15, 55), (1, 366)))
+# ax = LScene(fig[1, 1], scenekw=(show_axis=false,)) # not used
 plt = volumeslices!(ax, lon, lat, time, vol)
 
 on(i) do v
@@ -46,6 +51,7 @@ ax = LScene(fig[1, 1], scenekw=(show_axis=true, tellwidth=false, tellheight=fals
 # ax.aspect = DataAspect()
 # vol = [cos(X) * sin(Y) * sin(Z) for X ∈ x, Y ∈ y, Z ∈ z]
 # plt = volume!(ax, lon, lat, time, vol) #  
+
 
 sg = SliderGrid(fig[2, 1],
   (label="x", range=x),
@@ -79,7 +85,6 @@ map(zip(hmaps, toggles)) do (h, t)
   connect!(h.visible, t.active)
 end
 
-
 fig
 ```
 
@@ -89,7 +94,8 @@ using GLMakie
 
 
 fig = Figure()
-ax = LScene(fig[1, 1], show_axis=false)
+# ax = LScene(fig[1, 1], show_axis=false)
+ax = Axis3(fig[1, 1], viewmode = :fit)
 
 x = LinRange(0, π, 50)
 y = LinRange(0, 2π, 100)

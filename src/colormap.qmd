@@ -1,0 +1,69 @@
+```{julia}
+include("../main_pkgs.jl")
+
+using Colors
+using ColorSchemes
+using LaTeXStrings
+```
+
+```{julia}
+function write_fig2(file="Rplot.pdf", width=10, height=5; show=true)
+  plot!(size=(width * 72, height * 72))
+  savefig(file)
+  if show
+    @show file
+    show_file(file)
+  end
+end
+
+function set_colors_and_cycle()
+    # Epicycloid lines
+    x(r, k, θ) = r * (k .+ 1.0) .* cos.(θ) .- r * cos.((k .+ 1.0) .* θ)
+    y(r, k, θ) = r * (k .+ 1.0) .* sin.(θ) .- r * sin.((k .+ 1.0) .* θ)
+    θ = LinRange(0, 6.2π, 1000)
+    axis = (; xlabel=L"x(\theta)", ylabel=L"y(\theta)",
+        title="Epicycloid", aspect=DataAspect())
+    figure = (; resolution=(600, 400), font="CMU Serif")
+    fig, ax, _ = lines(x(1, 1, θ), y(1, 1, θ); color="firebrick1", # string
+        label=L"1.0", axis=axis, figure=figure)
+    lines!(ax, x(4, 2, θ), y(4, 2, θ); color=:royalblue1, #symbol
+        label=L"2.0")
+    for k = 2.5:0.5:5.5
+        lines!(ax, x(2k, k, θ), y(2k, k, θ); label=("$(k)")) #cycle
+    end
+    Legend(fig[1, 2], ax, latexstring("k, r = 2k"), merge=true)
+    fig
+end
+
+set_colors_and_cycle()
+```
+
+```{julia}
+figure = (; resolution=(600, 400), font="CMU Serif")
+axis = (; xlabel=L"x", ylabel=L"y", aspect=DataAspect())
+fig, ax, pltobj = heatmap(rand(20, 20); colorrange=(0, 1),
+  colormap=Reverse(:viridis), axis=axis, figure=figure)
+Colorbar(fig[1, 2], pltobj, label="Reverse colormap Sequential")
+fig
+```
+
+```{julia}
+CairoMakie.activate!()
+# GLMakie.activate!()
+
+width = 10;
+height = 7;
+
+figure = (; resolution=(width * 72, height * 72), font="CMU Serif")
+axis = (; xlabel=L"x", ylabel=L"y", aspect=DataAspect())
+fig, ax, pltobj = heatmap(randn(20, 20); colorrange=(-2, 2),
+  colormap="diverging_rainbow_bgymr_45_85_c67_n256",
+  highclip=:black, lowclip=:white, axis=axis, figure=figure)
+Colorbar(fig[1, 2], pltobj, label="Diverging colormap")
+fig
+
+# write_fig2("a.pdf")
+# plot!(size=(width * 72, height * 72))
+save("fig.pdf", fig; pt_per_unit=0.5);
+# save("fig.png", fig, pt_per_unit=0.5);
+```
